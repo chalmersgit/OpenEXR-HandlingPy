@@ -74,34 +74,28 @@ def loadEXR_grey_np(filename):
     return img
 
 def saveEXR_grey_np(img, filename):
-    d = len(img.shape)
-    if d >= 3:
-        w, h,_ = img.shape
-    else:
-        w, h = img.shape
-    assert d == 3 or d == 4 or d == 2
+	img = img.astype(numpy.float32) # comment this out if we have problems
 
-    if d == 2:
-        if type(img[0]) != numpy.float32:
-            img = img.astype(numpy.float32)
-    elif d == 3:
-        if type(img[0,0,0]) != numpy.float32:
-            img = img.astype(numpy.float32)
-    if d == 4:
-        if type(img[0,0,0,0]) != numpy.float32:
-            img = img.astype(numpy.float32)   
-            
-    # get the channels
-    if d == 2:
-        intensity = numpy.array(img[:,:]).data
-    else:
-        red = numpy.array(img[:,:,0])
-        green = numpy.array(img[:,:,1])
-        blue = numpy.array(img[:,:,2])
-        itentensity_temp = (red+green+blue) / 3
-        intensity = itentensity_temp.data
-    
-    # Write the three color channels to the output file
-    out = OpenEXR.OutputFile(filename, OpenEXR.Header(h,w))
-    dict = {'R' : str(intensity), 'G' : str(intensity), 'B' : str(intensity)}
-    out.writePixels(dict)       
+	d = len(img.shape)
+	if d >= 3:
+		w, h, _ = img.shape
+	else:
+		w, h = img.shape
+	assert d == 3 or d == 4 or d == 2
+			
+	# get the channels
+	if d == 2:
+		intensity = numpy.array(img[:,:]).data
+	else:
+		red = numpy.array(img[:,:,0])
+		green = numpy.array(img[:,:,1])
+		blue = numpy.array(img[:,:,2])
+		itentensity_temp = (red+green+blue) / 3
+		intensity = itentensity_temp.data
+	
+	intensity = intensity.tobytes()
+
+	# Write the three color channels to the output file
+	out = OpenEXR.OutputFile(filename, OpenEXR.Header(h,w))
+	dict = {'R' : intensity, 'G' : intensity, 'B' : intensity}
+	out.writePixels(dict)       
