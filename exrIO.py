@@ -28,22 +28,24 @@ def loadEXRnp(filename):
     return img
 
 def saveEXRnp(img, filename):
-    #img = img.astype(numpy.float32)
-    
-    w, h, d = img.shape
-    assert d == 3 or d == 4
+	img = img.astype(numpy.float32) 
+	
+	w, h, d = img.shape
+	assert d == 3 or d == 4
 
-    # get the channels
-    red = numpy.array(img[:,:,0]).data
-    green = numpy.array(img[:,:,1]).data
-    blue = numpy.array(img[:,:,2]).data
-    if d == 4: alpha = numpy.array(img[:,:,3]).data
-    
-    # Write the three color channels to the output file
-    out = OpenEXR.OutputFile(filename, OpenEXR.Header(h,w))
-    dict = {'R' : str(red), 'G' : str(green), 'B' : str(blue)}
-    if d == 4: dict['A'] = alpha
-    out.writePixels(dict)
+	# get the channels
+	red = img[:,:,0].tobytes()
+	green = img[:,:,1].tobytes()
+	blue = img[:,:,2].tobytes()
+	if d == 4: alpha = img[:,:,3].tobytes()
+
+	# Make dictionary
+	col_dict = {'R': red, 'G': green, 'B': blue}
+	if d == 4: col_dict['A'] = alpha
+
+	## Write the three color channels to the output file
+	out = OpenEXR.OutputFile(filename, OpenEXR.Header(h,w))
+	out.writePixels(col_dict)
     
     
 def loadEXR_grey_np(filename):
