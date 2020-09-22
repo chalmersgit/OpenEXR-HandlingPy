@@ -1,5 +1,9 @@
 import OpenEXR, Imath, numpy
 
+# If you have issues loading EXR images (e.g., compression type),
+# you try modifying the headers. Examples are here:
+# https://excamera.com/articles/26/doc/openexr.html#headers
+
 def loadEXRnp(filename):
     # Open the input file
     file = OpenEXR.InputFile(filename)
